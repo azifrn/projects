@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tax Calculation</title>
+    <style>
+      body{
+        background-color:#34312D;
+        color:#D9C5B2;
+        font-family: sans-serif;
+        font-size: 3vw;
+      }
+      table,tr,td{
+        text-align:left;
+        border:0.3vw solid #F3F3F4;
+        border-collapse: collapse;
+        padding: 3vw 5vw;
+      }
+      p{
+        margin:0;
+      }
+      .ctxt{
+        font-weight: bold;
+        color:#F3F3F4;
+      }
+      #chgsalary{
+        font-size: 2vw;
+        background-color: #F3F3F4;
+        margin: 2vh;
+        width: 20vw;
+        text-align:center;
+        border-radius:3vw;
+        padding: 1vw 0vw;
+        outline:none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+
+    </script>
+
+    <center>
+      <!-- calculation table for fun -->
+    <table>
+      <tr>
+        <td class="ctxt"><p>Salary </p></td>
+        <td><p id="salary"></p></td>
+      </tr>
+      <tr>
+        <td class="ctxt"><p>Tax (<span id="taxpercent"></span>%) </p></td>
+        <td><p id="salarytaxed"></p></td>
+      </tr>
+      <tr>
+        <td class="ctxt"><p>Net Salary</p></td>
+        <td><p id="netsalary"></p></td>
+      </tr>
+    </table>
+
+      <p style="font-size:2vw;">Update Salary
+      <input id="chgsalary" name="chgsalary" type="number" onkeyup="updateSalary()"/></p>
+    </center>
+
+    <script>
+    var salary = prompt("Enter salary");
+    function calcSalary(salary) {
+      var tax,taxedsalary,netsalary;
+
+      if (salary<=3000){
+        tax = 0;
+      }
+      else if (salary>=3001 && salary<=5000){
+        tax = 0.025;
+      }
+      else if (salary>=5001 && salary<=7000){
+        tax = 0.05;
+      }
+      else if (salary>=7001 && salary<=10000){
+        tax = 0.075;
+      }
+      else if (salary>10000){
+        tax = 0.1;
+      }
+
+      taxedsalary = salary*tax;
+      netsalary = salary - taxedsalary;
+
+      document.getElementById("salary").innerHTML = salary;
+      document.getElementById("taxpercent").innerHTML = tax*100;
+      document.getElementById("salarytaxed").innerHTML = taxedsalary;
+      document.getElementById("netsalary").innerHTML = netsalary;
+      return salary;
+    }
+
+    calcSalary(salary);
+    document.getElementById("chgsalary").value = calcSalary(salary);
+
+    function updateSalary(){
+      newsalary = document.getElementById("chgsalary").value;
+      calcSalary(newsalary);
+    }
+    </script>
+
+  <p style="position:fixed;bottom:0px;font-size:1vw;">© 2020 Azim Farhan</p>
+  </body>
+</html>
+<!-- coded by azim farhan.-->
