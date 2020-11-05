@@ -1,6 +1,3 @@
-
-
-<!DOCTYPE html>
 <html>
   <body>
   <a href="#">1. DontTouchMe by TeamDuckDev</a>
