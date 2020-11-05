@@ -2,10 +2,6 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Tax Calculation</title>
-  </head>
-
   <body>
   <a href="#">1. DontTouchMe by TeamDuckDev</a>
   <br>
