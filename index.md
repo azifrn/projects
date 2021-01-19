@@ -4,7 +4,7 @@
   <br>
   <a href="assignments/taxfunc.html">2. Tax Calc Assignment (MMS3013)</a>
   <br>
-  <a href="assignments/FYP/poster.pdf">3. Final Year Project Poster</a>
+  <a href="assignments/FYP/WEB07_poster.pdf">3. Final Year Project Poster</a>
   </body>
 </html>
 <!-- coded by azim farhan.-->
