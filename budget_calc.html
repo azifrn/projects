@@ -251,16 +251,20 @@
                 const calculationType = category.querySelector('.calculation-type').value;
                 const categoryValue = parseFloat(category.querySelector('.category-value').value);
 
-                categories.push({
-                    name: categoryName,
-                    type: calculationType,
-                    value: categoryValue,
-                });
+                // Only save the category if it has a valid name and value
+                if (categoryName.trim() !== '' && !isNaN(categoryValue)) {
+                    categories.push({
+                        name: categoryName,
+                        type: calculationType,
+                        value: categoryValue,
+                    });
+                }
             });
 
             localStorage.setItem('categories', JSON.stringify(categories));
-            localStorage.setItem('salary', salary)
+            localStorage.setItem('salary', salary);
         }
+
 
         function clearCategories() {
             localStorage.removeItem('categories');
@@ -289,10 +293,6 @@
             categories.forEach(category => {
                 const [categoryName, categoryValue] = category.innerText.split(':');
                 const formattedValue = categoryValue.trim();
-
-                // Extract percentage or flat information
-                const matchPercentage = formattedValue.match(/RM (\d+\.\d+) \((\d+)%\)/);
-                const matchFlat = formattedValue.match(/RM (\d+\.\d+) \((Flat)\)/);
 
                 resultText += `${categoryName}\t\t${formattedValue}\n`;
             });
