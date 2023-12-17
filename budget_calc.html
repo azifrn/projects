@@ -98,7 +98,7 @@
         }
 
         /* Style the accordion panel. Note: hidden by default */
-        .panel {
+        #panel {
             padding: 0 18px;
             background-color: white;
             max-height: 0;
@@ -116,7 +116,7 @@
             <input type="number" id="salary" required>
 
             <span class="accordion" id="span-btn">Categories</span>
-            <div class="panel">
+            <div id="panel">
                 <div id="categories">
                     <div class="category">
                         <input type="text" class="category-name" placeholder="Category Name">
@@ -154,7 +154,6 @@
             const index = categoriesDiv.childElementCount + 1;
 
             const accordionBtn = document.getElementById('span-btn');
-            accordionBtn.innerText = `Category ${index}`;
 
             newCategoryDiv.innerHTML = `
         <input type="text" class="category-name" placeholder="Category Name">
@@ -167,6 +166,10 @@
     `;
 
             categoriesDiv.appendChild(newCategoryDiv);
+
+            // Manually adjust the accordion panel's max-height
+            const panel = document.getElementById('panel');
+            panel.style.maxHeight = panel.scrollHeight + "px";
         }
 
         function calculateBudget() {
@@ -192,19 +195,23 @@
                 const categoryValue = parseFloat(category.querySelector('.category-value').value);
 
                 let calculatedValue = 0;
+                let calculationDetails = '';
 
                 if (calculationType === 'percentage') {
                     calculatedValue = (salary * categoryValue) / 100;
+                    calculationDetails = `(${categoryValue}%)`;
                 } else if (calculationType === 'flat') {
                     calculatedValue = categoryValue;
+                    calculationDetails = `(Flat)`;
                 }
 
-                resultHTML += `<p>${categoryName}: RM ${calculatedValue.toFixed(2)}</p>`;
+                resultHTML += `<p>${categoryName}: RM ${calculatedValue.toFixed(2)} ${calculationDetails}</p>`;
             });
 
             document.getElementById('result').innerHTML = resultHTML;
             saveCategories();
         }
+
 
         function loadCategories() {
             const categories = JSON.parse(localStorage.getItem('categories')) || [];
@@ -267,13 +274,28 @@
         }
 
         function saveAsTextFile() {
-            const resultDiv = document.getElementById('result');
-            const resultText = resultDiv.innerText;
+            const salaryInput = document.getElementById('salary');
+            const salary = parseFloat(salaryInput.value);
 
-            if (!resultText) {
-                alert('Please calculate the budget first.');
+            if (isNaN(salary) || salary <= 0) {
+                alert('Please provide a valid salary.');
                 return;
             }
+
+            const resultDiv = document.getElementById('result');
+            const categories = resultDiv.querySelectorAll('p');
+            let resultText = `Salary\t\tRM ${salary.toFixed(2)}\n\nCalculated Budget\n\n`;
+
+            categories.forEach(category => {
+                const [categoryName, categoryValue] = category.innerText.split(':');
+                const formattedValue = categoryValue.trim();
+
+                // Extract percentage or flat information
+                const matchPercentage = formattedValue.match(/RM (\d+\.\d+) \((\d+)%\)/);
+                const matchFlat = formattedValue.match(/RM (\d+\.\d+) \((Flat)\)/);
+
+                resultText += `${categoryName}\t\t${formattedValue}\n`;
+            });
 
             const blob = new Blob([resultText], { type: 'text/plain' });
             const a = document.createElement('a');
