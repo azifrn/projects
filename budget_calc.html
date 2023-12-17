@@ -310,13 +310,41 @@
             const blob = new Blob([resultText], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'calculated_budget.txt';
+            a.download = 'budget_' + getCurrentDate() + '.txt';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         }
 
+        function getCurrentDate() {
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
 
+            const currentDate = new Date();
+            let currentMonthIndex = currentDate.getMonth();
+
+            // Handle December separately
+            let nextMonthIndex = (currentMonthIndex + 1) % 12;
+            let nextYear = currentDate.getFullYear();
+            if (nextMonthIndex === 0) {
+                // If the next month is January, increment the year
+                nextYear++;
+            }
+
+            const nextMonth = months[nextMonthIndex];
+            const nextDay = currentDate.getDate();
+            const nextYearStr = nextYear.toString();
+
+            // Format the output as 'MonthDayYear'
+            const formattedDate = `${nextMonth}${nextYearStr}`;
+
+            // Output the result
+            return formattedDate;
+        }
+
+        // Call the function to get and output the current date
         // accordion
         var acc = document.getElementsByClassName("accordion");
         var i;
