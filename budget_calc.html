@@ -112,7 +112,7 @@
     <div class="container">
         <h1>Budget Calculator</h1>
         <form id="budgetForm">
-            <label for="salary">Enter your salary:</label>
+            <label for="salary">Enter your salary (RM):</label>
             <input type="number" id="salary" required>
 
             <span class="accordion" id="span-btn">Categories</span>
@@ -199,7 +199,7 @@
                     calculatedValue = categoryValue;
                 }
 
-                resultHTML += `<p>${categoryName}: $${calculatedValue.toFixed(2)}</p>`;
+                resultHTML += `<p>${categoryName}: RM ${calculatedValue.toFixed(2)}</p>`;
             });
 
             document.getElementById('result').innerHTML = resultHTML;
