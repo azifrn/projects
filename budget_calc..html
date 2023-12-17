@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            /* Adjusted width to avoid overlap */
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            /* Ensure the button takes the full width */
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .category {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .remove-category {
+            top: 5px;
+            /* Adjusted top position */
+            right: 5px;
+            /* Adjusted right position */
+            padding: 5px;
+            background-color: #ff3333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Style the buttons that are used to open and close the accordion panel */
+        .accordion {
+            display: inline-block;
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            padding: 15px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: 0.4s;
+            border-radius: 4px;
+        }
+
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active,
+        .accordion:hover {
+            background-color: #ccc;
+        }
+
+        /* Style the accordion panel. Note: hidden by default */
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Budget Calculator</h1>
+        <form id="budgetForm">
+            <label for="salary">Enter your salary:</label>
+            <input type="number" id="salary" required>
+
+            <span class="accordion" id="span-btn">Categories</span>
+            <div class="panel">
+                <div id="categories">
+                    <div class="category">
+                        <input type="text" class="category-name" placeholder="Category Name">
+                        <select class="calculation-type">
+                            <option value="percentage">Percentage</option>
+                            <option value="flat">Flat</option>
+                        </select>
+                        <input type="number" class="category-value" placeholder="Value">
+                        <button type="button" class="remove-category" onclick="removeCategory(this)">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <button type="button" onclick="addCategory()">Add Category</button>
+            <button type="button" onclick="clearCategories()">Clear Categories</button>
+            <button type="button" onclick="calculateBudget()">Submit</button>
+            <button type="button" onclick="saveAsTextFile()">Save as Text File</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+        });
+
+        function addCategory() {
+            const categoriesDiv = document.getElementById('categories');
+            const newCategoryDiv = document.createElement('div');
+            newCategoryDiv.className = 'category';
+
+            const index = categoriesDiv.childElementCount + 1;
+
+            const accordionBtn = document.getElementById('span-btn');
+            accordionBtn.innerText = `Category ${index}`;
+
+            newCategoryDiv.innerHTML = `
+        <input type="text" class="category-name" placeholder="Category Name">
+        <select class="calculation-type">
+            <option value="percentage">Percentage</option>
+            <option value="flat">Flat</option>
+        </select>
+        <input type="number" class="category-value" placeholder="Value">
+        <button type="button" class="remove-category" onclick="removeCategory(this)">Remove</button>
+    `;
+
+            categoriesDiv.appendChild(newCategoryDiv);
+        }
+
+        function calculateBudget() {
+            const salary = parseFloat(document.getElementById('salary').value);
+            const categories = document.querySelectorAll('.category');
+            let resultHTML = '<h2>Calculated Budget</h2>';
+
+            // Remove empty categories
+            const validCategories = Array.from(categories).filter(category => {
+                const categoryName = category.querySelector('.category-name').value.trim();
+                const categoryValue = parseFloat(category.querySelector('.category-value').value);
+                return categoryName !== '' && !isNaN(categoryValue);
+            });
+
+            if (isNaN(salary) || validCategories.length === 0) {
+                alert('Please provide a valid salary and at least one category with a valid value.');
+                return;
+            }
+
+            validCategories.forEach((category, index) => {
+                const categoryName = category.querySelector('.category-name').value;
+                const calculationType = category.querySelector('.calculation-type').value;
+                const categoryValue = parseFloat(category.querySelector('.category-value').value);
+
+                let calculatedValue = 0;
+
+                if (calculationType === 'percentage') {
+                    calculatedValue = (salary * categoryValue) / 100;
+                } else if (calculationType === 'flat') {
+                    calculatedValue = categoryValue;
+                }
+
+                resultHTML += `<p>${categoryName}: $${calculatedValue.toFixed(2)}</p>`;
+            });
+
+            document.getElementById('result').innerHTML = resultHTML;
+            saveCategories();
+        }
+
+        function loadCategories() {
+            const categories = JSON.parse(localStorage.getItem('categories')) || [];
+            const categoriesDiv = document.getElementById('categories');
+
+            const savedSalary = localStorage.getItem('salary');
+            if (savedSalary) {
+                document.getElementById('salary').value = savedSalary;
+            }
+
+            categories.forEach((category, index) => {
+                const div = document.createElement('div');
+                div.className = 'category';
+
+                div.innerHTML = `
+                    <input type="text" class="category-name" placeholder="Category Name" value="${category.name}">
+                    <select class="calculation-type">
+                        <option value="percentage" ${category.type === 'percentage' ? 'selected' : ''}>Percentage</option>
+                        <option value="flat" ${category.type === 'flat' ? 'selected' : ''}>Flat</option>
+                    </select>
+                    <input type="number" class="category-value" placeholder="Value" value="${category.value}">
+                    <button type="button" class="remove-category" onclick="removeCategory(this)">Remove</button>
+                `;
+
+                categoriesDiv.appendChild(div);
+            });
+        }
+
+        function saveCategories() {
+            const categories = [];
+            const categoryElements = document.querySelectorAll('.category');
+            const salaryInput = document.getElementById('salary');
+            const salary = parseFloat(salaryInput.value);
+
+            categoryElements.forEach((category, index) => {
+                const categoryName = category.querySelector('.category-name').value;
+                const calculationType = category.querySelector('.calculation-type').value;
+                const categoryValue = parseFloat(category.querySelector('.category-value').value);
+
+                categories.push({
+                    name: categoryName,
+                    type: calculationType,
+                    value: categoryValue,
+                });
+            });
+
+            localStorage.setItem('categories', JSON.stringify(categories));
+            localStorage.setItem('salary', salary)
+        }
+
+        function clearCategories() {
+            localStorage.removeItem('categories');
+            document.getElementById('categories').innerHTML = '';
+        }
+
+        function removeCategory(button) {
+            const categoryDiv = button.parentElement;
+            categoryDiv.remove();
+            saveCategories();
+        }
+
+        function saveAsTextFile() {
+            const resultDiv = document.getElementById('result');
+            const resultText = resultDiv.innerText;
+
+            if (!resultText) {
+                alert('Please calculate the budget first.');
+                return;
+            }
+
+            const blob = new Blob([resultText], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'calculated_budget.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+
+        // accordion
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
