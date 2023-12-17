@@ -78,7 +78,7 @@
         .accordion {
             display: inline-block;
             background-color: #4caf50;
-            color:white;
+            color: white;
             cursor: pointer;
             margin-bottom: 10px;
             box-sizing: border-box;
@@ -96,9 +96,10 @@
         .accordion:hover {
             background-color: #45a049;
         }
-        .active{
+
+        .active {
             background-color: rgb(60, 60, 60);
-            color:white;
+            color: white;
         }
 
         /* Style the accordion panel. Note: hidden by default */
@@ -177,7 +178,9 @@
         }
 
         function calculateBudget() {
+
             const salary = parseFloat(document.getElementById('salary').value);
+            let salaryCounter = salary;
             const categories = document.querySelectorAll('.category');
             let resultHTML = '<h2>Calculated Budget</h2>';
 
@@ -209,9 +212,12 @@
                     calculationDetails = `(Flat)`;
                 }
 
+                salaryCounter = salaryCounter - calculatedValue.toFixed(2);
+                console.log(salaryCounter);
                 resultHTML += `<p>${categoryName}: RM ${calculatedValue.toFixed(2)} ${calculationDetails}</p>`;
             });
 
+            resultHTML += `<p>[Extra: RM ${salaryCounter.toFixed(2)}]</p>`;
             document.getElementById('result').innerHTML = resultHTML;
             saveCategories();
         }
@@ -292,13 +298,13 @@
 
             const resultDiv = document.getElementById('result');
             const categories = resultDiv.querySelectorAll('p');
-            let resultText = `Salary\t\tRM ${salary.toFixed(2)}\n\nCalculated Budget\n\n`;
+            let resultText = `Salary\t\t\tRM ${salary.toFixed(2)}\n\nCalculated Budget\n\n`;
 
             categories.forEach(category => {
                 const [categoryName, categoryValue] = category.innerText.split(':');
                 const formattedValue = categoryValue.trim();
 
-                resultText += `${categoryName}\t\t${formattedValue}\n`;
+                resultText += `${categoryName}\t\t\t${formattedValue}\n`;
             });
 
             const blob = new Blob([resultText], { type: 'text/plain' });
