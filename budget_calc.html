@@ -6,25 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget Calculator</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: flex-start; /* Change to flex-start to prevent items from stretching */
+    justify-content: center;
+    min-height: 100vh; /* Set a minimum height for the body */
+}
 
-        .container {
-            width: 400px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-        }
+.container {
+    width: 400px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    margin-top: 100px; /* Adjust the top margin to create space for the input */
+}
+
 
         label {
             display: block;
@@ -110,6 +112,11 @@
             overflow: hidden;
             transition: max-height 0.2s ease-out;
         }
+        
+        #panel-ctn{
+            max-height:500px;
+            background-color: red;
+        }
     </style>
 </head>
 
@@ -121,19 +128,20 @@
             <input type="number" id="salary" required>
 
             <span class="accordion" id="span-btn">Categories</span>
-            <div id="panel">
-                <div id="categories">
-                    <div class="category">
-                        <input type="text" class="category-name" placeholder="Category Name">
-                        <select class="calculation-type">
-                            <option value="percentage">Percentage</option>
-                            <option value="flat">Flat</option>
-                        </select>
-                        <input type="number" class="category-value" placeholder="Value">
-                        <button type="button" class="remove-category" onclick="removeCategory(this)">Remove</button>
+                <div id="panel">
+                    <div id="categories">
+                        <div class="category">
+                            <input type="text" class="category-name" placeholder="Category Name">
+                            <select class="calculation-type">
+                                <option value="percentage">Percentage</option>
+                                <option value="flat">Flat</option>
+                            </select>
+                            <input type="number" class="category-value" placeholder="Value">
+                            <button type="button" class="remove-category" onclick="removeCategory(this)">Remove</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+
 
 
             <button type="button" onclick="addCategory()">Add Category</button>
@@ -317,7 +325,7 @@
 
 
                 if(categoryName == 'Extra'){
-                    resultText += `\n${paddedCategoryName}\t\t\t${formattedValue}`;
+                    resultText = `\n${paddedCategoryName}\t\t\t${formattedValue}`;
                 }else{
                     resultText += `${paddedCategoryName}\t\t\t${formattedValue}\n`;
                 }
