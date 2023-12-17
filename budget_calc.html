@@ -217,7 +217,7 @@
                 resultHTML += `<p>${categoryName}: RM ${calculatedValue.toFixed(2)} ${calculationDetails}</p>`;
             });
 
-            resultHTML += `<p>[Extra: RM ${salaryCounter.toFixed(2)}]</p>`;
+            resultHTML += `<p>Extra: RM ${salaryCounter.toFixed(2)}</p>`;
             document.getElementById('result').innerHTML = resultHTML;
             saveCategories();
         }
@@ -298,13 +298,32 @@
 
             const resultDiv = document.getElementById('result');
             const categories = resultDiv.querySelectorAll('p');
+
+            // Find the maximum length of category names
+            let maxCategoryNameLength = 0;
+            categories.forEach(category => {
+                const categoryName = category.innerText.split(':')[0].trim();
+                maxCategoryNameLength = Math.max(maxCategoryNameLength, categoryName.length);
+            });
+
             let resultText = `Salary\t\t\tRM ${salary.toFixed(2)}\n\nCalculated Budget\n\n`;
 
             categories.forEach(category => {
                 const [categoryName, categoryValue] = category.innerText.split(':');
                 const formattedValue = categoryValue.trim();
 
-                resultText += `${categoryName}\t\t\t${formattedValue}\n`;
+                // Pad category name to ensure consistent alignment
+                const paddedCategoryName = categoryName.trim().padEnd(maxCategoryNameLength + 1);
+
+
+                if(categoryName == 'Extra'){
+                    resultText += `\n${paddedCategoryName}\t\t\t${formattedValue}`;
+                }else{
+                    resultText += `${paddedCategoryName}\t\t\t${formattedValue}\n`;
+                }
+                
+                
+
             });
 
             const blob = new Blob([resultText], { type: 'text/plain' });
@@ -314,6 +333,7 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+
         }
 
         function getCurrentDate() {
